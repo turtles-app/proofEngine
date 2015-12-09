@@ -28,13 +28,6 @@ var Element = function (name, set) {
 	set.elements.push(this);
 }
 
-var a = new Set("A");
-var b = new Set("B");
-var c = new Set("C");
-
-var x = new Element('x', a);
-var y = new Element('y', b);
-
 
 
 //Function that verifies if an element is in a given atmoic set (A set represented by its own name, not the result of an operation of other sets), 
@@ -101,18 +94,23 @@ var contained = function(eName, syntax, facts) {
 //Test logs. This call asserts: (x is an element of A U (B n C)), based on the facts
 //Comment out the facts and run the script to observe whether the above assertion is 
 //justified by the facts
-console.log("\ncontained output:");
-console.log(contained( //inputs:
-	//element name
-	x.name, 
+// contained( //inputs:
+// 	//element name
+// 	x.name, 
 
-	//A syntax object. Represents A U (B n C)
-	[a.name, 'U', [b.name, 'n', c.name]], 
+// 	//A syntax object. Represents A U (B n C)
+// 	[a.name, 'U', [b.name, 'n', c.name]], 
 
-	//The array of facts
-	[
-		[x.name, 'isAnElementOf', a.name],//One fact (x is an element of A)
-		[x.name, 'isAnElementOf', b.name],//One fact (x is an element of B)
-		[x.name, 'isAnElementOf', c.name] //another fact 
-	]
-));
+// 	//The array of facts
+// 	[
+// 		[x.name, 'isAnElementOf', a.name],//One fact (x is an element of A)
+// 		[x.name, 'isAnElementOf', b.name],//One fact (x is an element of B)
+// 		[x.name, 'isAnElementOf', c.name] //another fact 
+// 	]
+// );
+
+
+module.exports =  {
+	inAtomic: inAtomic,
+	contained: contained
+}
