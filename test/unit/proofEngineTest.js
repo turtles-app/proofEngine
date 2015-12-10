@@ -1,10 +1,10 @@
 
 var should = require('chai').should();
-var app = require("../app.js");
+var app = require("../../proofEngine.js");
 
 var val;
 
-describe('inAtomic', function() {
+describe('inAtomic() Function verifies atomic assertions (e.g. x is in A)', function() {
 	describe('valid arguments', function() {
 		it('1 salient fact', function() {
 			val = app.inAtomic('x', 'A', [['x', 'isAnElementOf', 'A']]);
@@ -29,7 +29,7 @@ describe('inAtomic', function() {
 	});
 });
 
-describe('contained', function(){
+describe('contained() Function verifies composite assertions (e.g. x is in (A n B) U (C n D) )', function(){
 	//Test the contained function's verification of the following assertion:
 	describe('Claim that x is an element of A U (B n C)', function(){
 
@@ -79,6 +79,14 @@ describe('contained', function(){
 					]); 
 				val.should.equal(false);				
 			});	
+
+			it('because x is an element of D', function(){
+				val = app.contained('x', ['A', 'U', ['B', 'n', 'C']], 
+					[
+						['x', 'isAnElementOf', 'D'] // x is in D	
+					]); 
+				val.should.equal(false);
+			});
 		});
 	});
 

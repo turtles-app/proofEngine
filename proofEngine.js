@@ -1,32 +1,3 @@
-var Set = function (name, firstEquivalence) {
-	this.name = name;
-	this.elements = [];
-	this.equivalents = []; //List of syntactic representations of the set coded to read with regex
-	if (firstEquivalence) {
-		this.equivalents.push(firstEquivalence);
-	}
-	this.eqActiveIndex = 0;
-};
-
-//A copy of a set in which a given element will reside
-//Called before you add an element to a set;
-//Includes the index of the element within the set
-var eSet = function (set) {
-	this.name = set.name;
-	this.elements = set.elements;
-	this.equivalents = set.equivalents;
-	this.eqActiveIndex = set.eqActiveIndex;
-	this.elementIndex = set.length; //Index of particular element for which this eSet exists within set/eSet
-}
-
-var Element = function (name, set) {
-	this.name = name;
-	var firstContainingSet = new eSet(set);
-	this.containingSets = []
-	this.containingSets.push(set);
-
-	set.elements.push(this);
-}
 
 
 
@@ -52,7 +23,7 @@ var inAtomic = function(eName, setName, facts) {
 //The Syntax argument is a 3-element array, where the first and third elements are syntactic representations
 //of sets; either a string (set's name), or another syntax array. The second element is a string representing the operation.
 //Syntax arrays represent the set that results from an operation sets. A U (B n C) = ['A', 'U', ['B', 'n', C]]
-var contained = function(eName, syntax, facts) {
+var contains = function(eName, syntax, facts) {
 	var inFirst  = false;
 	var inSecond = false;
 
@@ -62,7 +33,7 @@ var contained = function(eName, syntax, facts) {
 			inFirst = inAtomic(eName, syntax[0], facts);
 			break;
 		case 'object':
-			inFirst = contained(eName, syntax[0], facts);
+			inFirst = contains(eName, syntax[0], facts);
 			break;
 	}
 
@@ -72,7 +43,7 @@ var contained = function(eName, syntax, facts) {
 			inSecond = inAtomic(eName, syntax[2], facts);
 			break;
 		case 'object':
-			inSecond = contained(eName, syntax[2], facts);
+			inSecond = contains(eName, syntax[2], facts);
 			break;
 	}
 
@@ -91,26 +62,8 @@ var contained = function(eName, syntax, facts) {
 };
 
 
-//Test logs. This call asserts: (x is an element of A U (B n C)), based on the facts
-//Comment out the facts and run the script to observe whether the above assertion is 
-//justified by the facts
-// contained( //inputs:
-// 	//element name
-// 	x.name, 
-
-// 	//A syntax object. Represents A U (B n C)
-// 	[a.name, 'U', [b.name, 'n', c.name]], 
-
-// 	//The array of facts
-// 	[
-// 		[x.name, 'isAnElementOf', a.name],//One fact (x is an element of A)
-// 		[x.name, 'isAnElementOf', b.name],//One fact (x is an element of B)
-// 		[x.name, 'isAnElementOf', c.name] //another fact 
-// 	]
-// );
-
 
 module.exports =  {
 	inAtomic: inAtomic,
-	contained: contained
+	contains: contains
 }
