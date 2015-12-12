@@ -1,17 +1,72 @@
 var chai 		= require('chai').should();
-var setEngine 		= require('../../setEngine.js');
+var setEngine 	= require('../../setEngine.js');
+var proofEngine = require('../../proofEngine')
 var Operations 	= require('../../operations.js');
 
 
 
-var a = new setEngine.Set('A'), b = new setEngine.Set('B');
-var x = new setEngine.Element('x', a), y = new setEngine.Element('y', b);
+var testUnion = function(setA, setB) {
+	var name = setA.equivalents[0] + ' U ' + setB.equivalents[0];
+	var res  = Operations.union(name, setA, setB);
+	describe(name, function(){
+		it("is a set", function(done){
+			res.should.be.an.instanceOf(setEngine.Set);
+			done();
+		});
+
+		it("has the right name", function(done){
+			res.equivalents[0].should.equal(name);
+			done();
+		});
+
+		it("has the right syntax", function(done){
+			res.equivalents[1].should.deep.eql([setA.equivalents[0], 'U', setB.equivalents[0]]);
+			done();
+		});
+
+		it("has the right elements", function(done){
+			var pass = true;
+			setA.elements.forEach(function(e, i, l) {
+				if (res.elements.indexOf(e) < 0) {
+					pass = false;
+				}
+			});
+			pass.should.equal(true, "an element of " + setA.equivalents[0] + " is missing from the union");
+
+			setB.elements.forEach(function(e, i, l) {
+				if (res.elements.indexOf(e) < 0) {
+					pass = false
+				}
+			});
+			pass.should.equal(true, "an element of " + setB.equivalents[0] + " is missing from the union");
+
+			res.elements.forEach(function(e, i, l) {
+				if (setA.elements.indexOf(e) < 0 && setB.elements.indexOf(e) < 0) {
+					pass = false;
+				}
+			});
+			pass.should.equal(true, "an element of the union is missing from setA, or setB");
+			done();
+		});
+
+		it("has the contains() method", function(done){
+			res.should.respondTo('contains');
+			res.should.have.property('contains').eql(proofEngine.contains);
+			done();
+		});
+
+	}); 
+};
+
+var a = new setEngine.Set('A'), b = new setEngine.Set('B'), c = new setEngine.Set('C');
+var x = new setEngine.Element('x', a), y = new setEngine.Element('y', b), z = new setEngine.Element('z', c);
 var union = Operations.union('a U b', a, b); 
+var unionTwo = Operations.union('(a U b) U c', union, c);
 
 
 describe('Union Operation Test', function(){
-	describe('Instantiation', function(){
-		it('loads a set', function(){
+	describe('setUp', function(){
+		it('sets loaded', function(){
 			a.should.be.an.instanceOf(setEngine.Set);
 			a.equivalents[0].should.a.be.equal('A');
 			a.elements.length.should.a.be.equal(1);
@@ -24,36 +79,78 @@ describe('Union Operation Test', function(){
 			b.eqActiveIndex.should.a.be.equal(0);
 		});
 
-		it('loads an element', function(){
+		it('elements loaded', function(){
 			x.name.should.a.be.equal('x');
 			x.containingSets.should.a.include(a.elements[x.containingSets[0].elementIndex].containingSets[0]);
 
 			y.name.should.a.be.equal('y');
-			y.containingSets.should.a.include(b.elements[y.containingSets[0].elementIndex].containingSets[0]);
+			y.containingSets.should.a.include(b.elements[y.containingSets[0].elementIndex].containingSets[1]);
 		});
 	});
-	describe('Union', function(){
-		it('is a set', function(){
-			union.should.be.an.instanceOf(setEngine.Set);
-		});
+	describe('Unions:', function(){
+		testUnion(a, b);
+		testUnion(union, c);
+		testUnion(unionTwo, c);
+		testUnion(union, unionTwo);
 
-		it('has the right name', function(){
-			union.equivalents[0].should.a.be.equal('a U b', "Name failed to load");
-		});
 
-		it('has the right syntax', function(){
-			union.syntax = ['A', 'U', 'B'];
-		});
+				///////////////////////////
+				// Hard Coded Test Cases //
+				///////////////////////////
 
-		it('has the right elements', function(){
-			union.should.a.have.property('elements').equal([x,y]);
-		});
+		// describe('Literal A U B', function() {
 
-		it('all eSets have correct active indices', function(){
+		// 	it('is a set', function(){
+		// 		union.should.be.an.instanceOf(setEngine.Set);
+		// 	});
 
-		});
-		it('has the contains() method', function(){
-			
-		});
-	});
-});
+		// 	it('has the right name', function(){
+		// 		union.equivalents [0].should.a.be.eql('a U b', "Name failed to load");
+		// 	});
+
+		// 	it('has the right syntax', function(){
+		// 		union.equivalents[1] = ['A', 'U', 'B'];
+		// 	});
+
+		// 	it('has the right elements', function(){
+		// 		union.should.a.have.property('elements').eql([x,y]);
+		// 	});
+
+		// 	it('all eSets have correct active indices', function(){
+
+		// 	});
+		// 	it('has the contains() method', function(){
+		// 		union.should.a.respondTo('contains');
+		// 		union.should.a.have.property('contains').eql(proofEngine.contains);
+		// 	});
+		// });
+
+		// describe('Literal (a U b) U c', function() {
+
+		// 	it('is a set', function(){
+		// 		unionTwo.should.be.an.instanceOf(setEngine.Set);
+		// 	});
+
+		// 	it('has the right name', function(){
+		// 		unionTwo.equivalents[0].should.a.be.eql('(a U b) U c', "Name failed to load");
+		// 	});
+
+		// 	it('has the right syntax', function(){
+		// 		unionTwo.equivalents[1] = [['A', 'U', 'B'], 'U', 'C'];
+		// 	});
+
+		// 	it('has the right elements', function(){
+		// 		unionTwo.should.a.have.property('elements').eql([x,y, z]);
+		// 	});
+
+		// 	it('all eSets have correct active indices', function(){
+
+		// 	});
+		// 	it('has the contains() method', function(){
+		// 		unionTwo.should.a.respondTo('contains');
+		// 		unionTwo.should.a.have.property('contains').eql(proofEngine.contains);
+		// 	});
+		// });
+
+	}); //End of Unions
+}); //End of Union Operation Test

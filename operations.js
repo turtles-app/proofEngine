@@ -4,11 +4,11 @@ var setEngine = require('./setEngine.js');
 var union = function(name, x, y) {
 	var unionSyntax = [x.equivalents[x.eqActiveIndex], 'U', y.equivalents[y.eqActiveIndex]];
 	var res = new setEngine.Set(name, unionSyntax);
-	var eRes = new setEngine.eSet(res);
+	// var eRes = new setEngine.eSet(res);
 	//Put everything from x into res
 	x.elements.forEach(function(e, i, list) {
-		e.containingSets.push(eRes);
-		eRes.elementIndex++;
+		e.containingSets.push(new setEngine.cpShell(res.setShell));
+		res.setShell.elementIndex++;
 		res.elements.push(e);
 	});
 
@@ -21,8 +21,8 @@ var union = function(name, x, y) {
 			}
 		});
 		if (goesIn) {
-			e.containingSets.push(eRes);
-			eRes.elementIndex++;
+			e.containingSets.push(new setEngine.cpShell(res.setShell));
+			res.setShell.elementIndex++;
 			res.elements.push(e);
 		}
 	});
