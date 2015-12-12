@@ -3,12 +3,10 @@ var setEngine = require('./setEngine.js');
 //Returns the union of two sets (another set) with the given name
 var union = function(name, x, y) {
 	var unionSyntax = [x.equivalents[x.eqActiveIndex], 'U', y.equivalents[y.eqActiveIndex]];
-	var res = new setEngine.Set(name, unionSyntax);
-	// var eRes = new setEngine.eSet(res);
+	var res = new setEngine.Set("union", name, unionSyntax);
 	//Put everything from x into res
 	x.elements.forEach(function(e, i, list) {
-		e.containingSets.push(new setEngine.cpShell(res.setShell));
-		res.setShell.elementIndex++;
+		e.routes.push(new setEngine.setRoute(res));
 		res.elements.push(e);
 	});
 
@@ -21,8 +19,7 @@ var union = function(name, x, y) {
 			}
 		});
 		if (goesIn) {
-			e.containingSets.push(new setEngine.cpShell(res.setShell));
-			res.setShell.elementIndex++;
+			e.routes.push(new setEngine.setRoute(res));
 			res.elements.push(e);
 		}
 	});

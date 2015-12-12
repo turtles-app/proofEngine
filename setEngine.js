@@ -1,48 +1,63 @@
 var proofEngine = require('./proofEngine.js');
 
-var Set = function (name, firstEquivalence) {
-	this.equivalents = [name]; //List of syntactic representations of the set coded to read with regex
+var Set = function (groupName, name, firstEquivalence) {
+	// All sets exist within named array within the universe object 
+	// (which is instantiated on the front end)
+	this.groupName = groupName;
+
+	//List of syntax (array) representations of the set
+	this.equivalents = [name]; 
 	this.elements = [];
 	
+	// If the set is the product of an operation between other sets
 	if (firstEquivalence) {
+		//Add that operation's syntax (array) representation to the set's equivalents
 		this.equivalents.push(firstEquivalence);
 	}
 	this.eqActiveIndex = 0;
 
 	var that = this;
-	this.setShell = new setShell(this);
+	// this.setShell = new setShell(this);
 };
-	Set.prototype.contains = proofEngine.contains;
 
-//A copy of a set in which a given element will reside
-//Called before you add an element to a set;
-//Includes the index of the element within the set
-var setShell = function (set) {
-	this.equivalents = set.equivalents;
-	this.eqActiveIndex = set.eqActiveIndex;
-	this.elementIndex = set.elements.length; //Index of particular element for which this eSet exists within set/eSet
+Set.prototype.contains = proofEngine.contains;
+
+
+
+//  Abstract class that relates an element to a set
+//  that contains it
+var setRoute = function (set) {
+	this.groupName 		= set.groupName;
+	this.setName		= set.equivalents[0];
+	this.elementIndex 	= set.elements.length; //Index of particular element for which this eSet exists within set/eSet
 }
 
-var cpShell = function (shell) {
-	this.equivalents = shell.equivalents;
-	this.eqActiveIndex = shell.eqActiveIndex;
-	this.elementIndex = shell.elementIndex;
-};
+// var cpShell = function (shell) {
+// 	this.equivalents = shell.equivalents;
+// 	this.eqActiveIndex = shell.eqActiveIndex;
+// 	this.elementIndex = shell.elementIndex;
+// };
 
+
+
+//  Element objects are placed in the elements (array) attribute
+//	of varius sets. Each element must be in at least one set.
+//	
+//	the routes (array) attrubute is a list of
+//  representations of relationships to the sets
+//	in which the Element resides.
 var Element = function (name, set) {
 	this.name = name;
-	var firstContainingSet = new cpShell(set.setShell);
-	this.containingSets = [];
-	this.containingSets.push(firstContainingSet);
-	set.setShell.elementIndex++;
+	var firstRoute = new setRoute(set);
+	this.routes = [];
+	this.routes.push(firstRoute);
 	set.elements.push(this);
 }
 
 
 
 module.exports = {
-	Set: Set,
-	Element: Element,
-	setShell: setShell,
-	cpShell: cpShell
+	Set: 	  Set,
+	Element:  Element,
+	setRoute: setRoute
 };

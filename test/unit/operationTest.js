@@ -58,10 +58,15 @@ var testUnion = function(setA, setB) {
 	}); 
 };
 
-var a = new setEngine.Set('A'), b = new setEngine.Set('B'), c = new setEngine.Set('C');
+var a = new setEngine.Set('testGroup','A'), b = new setEngine.Set('testGroup','B'), c = new setEngine.Set('testGroup','C');
 var x = new setEngine.Element('x', a), y = new setEngine.Element('y', b), z = new setEngine.Element('z', c);
 var union = Operations.union('a U b', a, b); 
 var unionTwo = Operations.union('(a U b) U c', union, c);
+
+console.log("\nx routes");
+console.log(x.routes);
+console.log("\ny routes");
+console.log(y.routes);
 
 
 describe('Union Operation Test', function(){
@@ -79,13 +84,32 @@ describe('Union Operation Test', function(){
 			b.eqActiveIndex.should.a.be.equal(0);
 		});
 
-		it('elements loaded', function(){
-			x.name.should.a.be.equal('x');
-			x.containingSets.should.a.include(a.elements[x.containingSets[0].elementIndex].containingSets[0]);
+		it('elements loaded', function(done){
+			x.name.should.equal('x');
+			x.routes.should.deep.eql(
+				[
+					{
+						groupName: 'testGroup',
+						setName: 'A',
+						elementIndex: 0
+					},
+					{
+						groupName: 'union',
+						setName: 'a U b', 
+						elementIndex: 0
+					},
+					{
+						groupName: 'union',
+						setName: '(a U b) U c',
+						elementIndex: 0
+					}
+				], 'x has incorrect routes'
+			);
 
-			y.name.should.a.be.equal('y');
-			y.containingSets.should.a.include(b.elements[y.containingSets[0].elementIndex].containingSets[1]);
-		});
+			y.name.should.equal('y');
+			// y.routes.should.a.include(b.elements[y.routes[0].elementIndex].routes[1]);
+			done();
+		}); //End of elements loaded it()
 	});
 	describe('Unions:', function(){
 		testUnion(a, b);
