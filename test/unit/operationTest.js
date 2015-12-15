@@ -9,22 +9,19 @@ var testUnion = function(setA, setB) {
 	var name = setA.equivalents[0] + ' U ' + setB.equivalents[0];
 	var res  = Operations.union(name, setA, setB);
 	describe(name, function(){
-		it("is a set", function(done){
+		it("is a set", function(){
 			res.should.be.an.instanceOf(setEngine.Set);
-			done();
 		});
 
-		it("has the right name", function(done){
+		it("has the right name", function(){
 			res.equivalents[0].should.equal(name);
-			done();
 		});
 
-		it("has the right syntax", function(done){
+		it("has the right syntax", function(){
 			res.equivalents[1].should.deep.eql([setA.equivalents[0], 'U', setB.equivalents[0]]);
-			done();
 		});
 
-		it("has the right elements", function(done){
+		it("has the right elements", function(){
 			var pass = true;
 			setA.elements.forEach(function(e, i, l) {
 				if (res.elements.indexOf(e) < 0) {
@@ -46,13 +43,11 @@ var testUnion = function(setA, setB) {
 				}
 			});
 			pass.should.equal(true, "an element of the union is missing from setA, or setB");
-			done();
 		});
 
-		it("has the contains() method", function(done){
+		it("has the contains() method", function(){
 			res.should.respondTo('contains');
 			res.should.have.property('contains').eql(proofEngine.contains);
-			done();
 		});
 
 	}); 
@@ -63,10 +58,6 @@ var x = new setEngine.Element('x', a), y = new setEngine.Element('y', b), z = ne
 var union = Operations.union('a U b', a, b); 
 var unionTwo = Operations.union('(a U b) U c', union, c);
 
-console.log("\nx routes");
-console.log(x.routes);
-console.log("\ny routes");
-console.log(y.routes);
 
 
 describe('Union Operation Test', function(){
@@ -84,33 +75,12 @@ describe('Union Operation Test', function(){
 			b.eqActiveIndex.should.a.be.equal(0);
 		});
 
-		it('elements loaded', function(done){
+		it('elements loaded', function(){
 			x.name.should.equal('x');
-			x.routes.should.deep.eql(
-				[
-					{
-						groupName: 'testGroup',
-						setName: 'A',
-						elementIndex: 0
-					},
-					{
-						groupName: 'union',
-						setName: 'a U b', 
-						elementIndex: 0
-					},
-					{
-						groupName: 'union',
-						setName: '(a U b) U c',
-						elementIndex: 0
-					}
-				], 'x has incorrect routes'
-			);
-
 			y.name.should.equal('y');
-			// y.routes.should.a.include(b.elements[y.routes[0].elementIndex].routes[1]);
-			done();
 		}); //End of elements loaded it()
 	});
+
 	describe('Unions:', function(){
 		testUnion(a, b);
 		testUnion(union, c);
@@ -178,3 +148,45 @@ describe('Union Operation Test', function(){
 
 	}); //End of Unions
 }); //End of Union Operation Test
+
+//Test the Set method that puts an Element into the Set
+describe('putIn', function(){
+	var a, b, x, y;
+	describe('putIn empty set', function(){
+		before(function(){
+			a = new setEngine.Set('testGroup', 'A');
+			b = new setEngine.Set('testGroup', 'B');
+			x = new setEngine.Element('x', b);
+			a.putIn(x);
+		});
+		it('A contains only x', function(){
+			a.elements.should.eql([x]);
+		});
+		it('x has correct routes', function(){
+			x.routes.should.eql([
+					{groupName: 'testGroup', setName: 'B', elementIndex: 0},
+					{groupName: 'testGroup', setName: 'A', elementIndex: 0}
+				]);
+		});
+	});
+
+	describe('putIn a set with one element', function(){
+		before(function(){
+			a = new setEngine.Set('testGroup', 'A');
+			b = new setEngine.Set('testGroup', 'B');
+			x = new setEngine.Element('x', a);
+			y = new setEngine.Element('y', b);
+			b.putIn(x);
+		});
+		it('B contains only y and x', function(){
+			b.elements.should.eql([y, x]);
+		});
+		it('x has the right routes', function(){
+			x.routes.should.eql([
+					{groupName: 'testGroup', setName: 'A', elementIndex: 0},
+					{groupName: 'testGroup', setName: 'B', elementIndex: 1}
+				]);			
+		});
+	});
+
+});

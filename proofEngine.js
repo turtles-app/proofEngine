@@ -1,6 +1,3 @@
-
-
-
 //Function that verifies if an element is in a given atmoic set (A set represented by its own name, not the result of an operation of other sets), 
 //based on an array of facts,each of which is a 3 element array like ['x', 'isAnElementOf', 'A']
 //Returns true if element is verifiably in the set, and false otherwise

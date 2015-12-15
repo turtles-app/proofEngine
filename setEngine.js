@@ -16,12 +16,17 @@ var Set = function (groupName, name, firstEquivalence) {
 	}
 	this.eqActiveIndex = 0;
 
-	var that = this;
-	// this.setShell = new setShell(this);
+
 };
 
 Set.prototype.contains = proofEngine.contains;
 
+//Puts an element in a Set's elements attribute
+Set.prototype.putIn = function(element) {
+	var set = this;
+	element.routes.push(new setRoute(set));
+	this.elements.push(element);
+}
 
 
 //  Abstract class that relates an element to a set
