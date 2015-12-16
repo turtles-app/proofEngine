@@ -35,7 +35,7 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 
 		describe('valid arguments', function(){
 			it('because x is an element of A', function(){
-				val = app.contained('x', ['A', 'U', ['B', 'n', 'C']], 
+				val = app.contains('x', ['A', 'U', ['B', 'n', 'C']], 
 					[
 						['x', 'isAnElementOf', 'A'] // one fact: because x is in A
 					]); 
@@ -43,7 +43,7 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 			});
 
 			it('because x is an element of B and C', function(){
-				val = app.contained('x', ['A', 'U', ['B', 'n', 'C']], 
+				val = app.contains('x', ['A', 'U', ['B', 'n', 'C']], 
 					[
 						['x', 'isAnElementOf', 'B'],
 						['x', 'isAnElementOf', 'C']
@@ -53,7 +53,7 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 			});	
 
 			it('because x is an element of A, B, and C', function(){
-				val = app.contained('x', ['A', 'U', ['B', 'n', 'C']], 
+				val = app.contains('x', ['A', 'U', ['B', 'n', 'C']], 
 					[
 						//Three facts
 						['x', 'isAnElementOf', 'A'], // because x is in A
@@ -65,7 +65,7 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 
 		describe('invalid arguments', function(){
 			it('because x is an element of B', function() {
-				val = app.contained('x', ['A', 'U', ['B', 'n', 'C']], 
+				val = app.contains('x', ['A', 'U', ['B', 'n', 'C']], 
 					[
 						['x', 'isAnElementOf', 'B'] // one fact: because x is in A
 					]); 
@@ -73,7 +73,7 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 			});
 
 			it('because x is an element of C', function() {
-				val = app.contained('x', ['A', 'U', ['B', 'n', 'C']], 
+				val = app.contains('x', ['A', 'U', ['B', 'n', 'C']], 
 					[
 						['x', 'isAnElementOf', 'C'] // one fact: because x is in A
 					]); 
@@ -81,7 +81,7 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 			});	
 
 			it('because x is an element of D', function(){
-				val = app.contained('x', ['A', 'U', ['B', 'n', 'C']], 
+				val = app.contains('x', ['A', 'U', ['B', 'n', 'C']], 
 					[
 						['x', 'isAnElementOf', 'D'] // x is in D	
 					]); 

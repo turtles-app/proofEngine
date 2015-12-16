@@ -23,8 +23,7 @@ Set.prototype.contains = proofEngine.contains;
 
 //Puts an element in a Set's elements attribute
 Set.prototype.putIn = function(element) {
-	var set = this;
-	element.routes.push(new setRoute(set));
+	element.routes.push(new setRoute(this));
 	this.elements.push(element);
 }
 
