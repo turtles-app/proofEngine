@@ -19,7 +19,6 @@ var Set = function (groupName, name, firstEquivalence) {
 
 };
 
-Set.prototype.contains = proofEngine.contains;
 
 //Puts an element in a Set's elements attribute
 Set.prototype.putIn = function(element) {

@@ -45,11 +45,6 @@ var testUnion = function(setA, setB) {
 			pass.should.equal(true, "an element of the union is missing from setA, or setB");
 		});
 
-		it("has the contains() method", function(){
-			res.should.respondTo('contains');
-			res.should.have.property('contains').eql(proofEngine.contains);
-		});
-
 	}); 
 };
 
