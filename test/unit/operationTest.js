@@ -4,6 +4,12 @@ var proofEngine = require('../../proofEngine')
 var Operations 	= require('../../operations.js');
 
 
+///////////////////////////////
+// Dynamic Testing Functions //
+///////////////////////////////
+
+//These Functions input two sets, and create a test case for the given operation
+//using those sets
 
 var testUnion = function(setA, setB) {
 	var name = setA.equivalents[0] + ' U ' + setB.equivalents[0];
@@ -48,8 +54,56 @@ var testUnion = function(setA, setB) {
 	}); 
 };
 
-var a = new setEngine.Set('testGroup','A'), b = new setEngine.Set('testGroup','B'), c = new setEngine.Set('testGroup','C');
+var testIntersection = function(setA, setB) {
+	var name = setA.equivalents[0] + ' n ' + setB.equivalents[0];
+	var res = Operations.intersection(name, setA, setB);
+	describe(name, function() {
+		it("is a set", function() {
+			res.should.be.an.instanceOf(setEngine.Set);
+		});
+		it("has the right name", function() {
+			res.equivalents[0].should.equal(name);
+		});
+		it("has the right syntax", function(){
+			res.equivalents[1].should.deep.eql([setA.equivalents[0], 'n', setB.equivalents[0]]);
+		});		
+		it("has the right elements", function() {
+			var pass = true;
+			//Check that everything in res is in both sets
+			res.elements.forEach(function(e, i, l) {
+				if(setA.elements.indexOf(e) < 0 || setB.elements.indexOf(e) < 0) {
+					pass = false;
+				}
+			});
+			pass.should.equal(true, "res element wasn't in one of the sets");
+
+			//Create list of things that should be in res
+			var shouldBeInRes = [];
+			setA.elements.forEach(function(e, i, l) {
+				setB.elements.forEach(function(bE, bI, bL) {
+					if (e.name === bE.name) {
+						shouldBeInRes.push(e);
+					}
+				});
+			});
+			//Check that all things in both sets are in res
+			shouldBeInRes.forEach(function(e, i, l) {
+				if (res.elements.indexOf(e) < 0) {
+					pass = false;
+				}
+			});
+			pass.should.equal(true, "res was missing one or more elements");
+
+		});
+	});
+};
+
+///////////////////
+// Instance Data //
+///////////////////
+var a = new setEngine.Set('testGroup','A'), b = new setEngine.Set('testGroup','B'), c = new setEngine.Set('testGroup','C'), d = new setEngine.Set('testGroup', 'D'); 
 var x = new setEngine.Element('x', a), y = new setEngine.Element('y', b), z = new setEngine.Element('z', c);
+d.elements.push(x, y);
 var union = Operations.union('a U b', a, b); 
 var unionTwo = Operations.union('(a U b) U c', union, c);
 
@@ -143,6 +197,12 @@ describe('Union Operation Test', function(){
 
 	}); //End of Unions
 }); //End of Union Operation Test
+
+describe('Intersection Test', function() {
+	testIntersection(a, d);
+	testIntersection(b, d);
+	testIntersection(union, unionTwo);
+});
 
 //Test the Set method that puts an Element into the Set
 describe('putIn', function(){

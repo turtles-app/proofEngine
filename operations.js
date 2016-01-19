@@ -6,8 +6,7 @@ var union = function(name, x, y) {
 	var res = new setEngine.Set("union", name, unionSyntax);
 	//Put everything from x into res
 	x.elements.forEach(function(e, i, list) {
-		e.routes.push(new setEngine.setRoute(res));
-		res.elements.push(e);
+		res.putIn(e);
 	});
 
 	//Put elements of y not already in res into res
@@ -19,15 +18,31 @@ var union = function(name, x, y) {
 			}
 		});
 		if (goesIn) {
-			e.routes.push(new setEngine.setRoute(res));
-			res.elements.push(e);
-		}
+			res.putIn(e);		}
 	});
 
 	return res;
 }
 
+//Returns the intersection of two sets (another set) with the given name
+var intersection = function(name, x, y) {
+	var intersectSyntax = [x.equivalents[x.eqActiveIndex], 'n', y.equivalents[y.eqActiveIndex]];
+	//Create the new set (will be empty)
+	var res = new setEngine.Set("intersection", name, intersectSyntax);
+	//Put the common elements from x into res
+	x.elements.forEach(function(element, index, list) {
+		y.elements.forEach(function(yElement, yIndex, yList) {
+			if (element.name === yElement.name) {
+				res.putIn(element);
+			}
+		});
+	});
+
+	return res;
+};
+
 
 module.exports = {
-	union: union
+	union: union,
+	intersection: intersection
 }
