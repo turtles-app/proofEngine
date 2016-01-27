@@ -50,8 +50,8 @@ var contains = function(eName, syntax, facts) {
 			facts.forEach(function(fact, index, list) {
 				//If the fact asserts that eName is in a composite set
 				if (fact.elementName === eName && !fact.simple) { //Then check if fact asserts eName is in first set of syntax
-					recurse = _.isEqual(fact.setSyntax, syntax[0]);
-					if (recurse) {
+					var syntaxMatch = _.isEqual(fact.setSyntax, syntax[0]);
+					if (syntaxMatch) {
 						recurse = false;
 						inFirst = true;
 					}
@@ -73,8 +73,8 @@ var contains = function(eName, syntax, facts) {
 			facts.forEach(function(fact, index, list) {
 				//If the fact asserts that eName is in a composite set
 				if (fact.elementName === eName && !fact.simple) { //Then check if fact asserts eName is in first set of syntax
-					recurse = _.isEqual(fact.setSyntax, syntax[2]);
-					if (recurse) {
+					var syntaxMatch = _.isEqual(fact.setSyntax, syntax[2]);
+					if (syntaxMatch) {
 						recurse = false;
 						inFirst = true;
 					}
