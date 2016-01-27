@@ -11,6 +11,15 @@ var inAtomic = function(eName, setName, facts) {
 	return res;
 };
 
+notInAtomic = function(eName, setName, facts) {
+	var res = false;
+	facts.forEach(function(fact, index, list) {
+		if (fact.elementName === eName && !fact.isIn && fact.setSyntax ===setName) {
+			res = true;
+		}
+	});
+	return res;
+};
 
 
 
