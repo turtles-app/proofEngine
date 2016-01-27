@@ -58,9 +58,21 @@ var Element = function (name, set) {
 }
 
 
+//	Fact object represents a fact of the form
+//		"x is contained in A, because [fact1, fact2, ...fact_n]", OR
+//		"x is NOT contained in A, because [fact1, fact2, ...fact_n]"
+var Fact = function (elementName, isIn, setSyntax) {
+	this.subject = "containment"; //These objects are facts about containment, not inclusion, or equality
+	this.elementName = elementName;
+	this.isIn = isIn; //true if x is in A, false if x is NOT in A
+	this.setSyntax = setSyntax; //Syntax of the referenced set
+	this.justifications = []; //array of facts submited by user to justify this fact
+	this.usedJustifications = []; //subset of justifications actually necessary for justification
+};
 
 module.exports = {
 	Set: 	  Set,
 	Element:  Element,
-	setRoute: setRoute
+	setRoute: setRoute,
+	Fact: Fact
 };

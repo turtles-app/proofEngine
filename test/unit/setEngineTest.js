@@ -1,3 +1,3 @@
-var Set = require('../../set.js');
+var setEngine = require('../../setEngine.js');
 
-var a = new Set('A');
+var a = new setEngine.Set('A');

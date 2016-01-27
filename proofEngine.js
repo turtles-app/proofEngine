@@ -1,10 +1,10 @@
 //Function that verifies if an element is in a given atmoic set (A set represented by its own name, not the result of an operation of other sets), 
-//based on an array of facts,each of which is a 3 element array like ['x', 'isAnElementOf', 'A']
+//based on an array of facts, each of which is a 3 fact object as defined in setEngine.js
 //Returns true if element is verifiably in the set, and false otherwise
 var inAtomic = function(eName, setName, facts) {
 	var res = false;
 	facts.forEach(function(fact, index, list) {
-		if (fact[0] === eName && fact[1] === 'isAnElementOf' && fact[2] === setName) {
+		if (fact.elementName === eName && fact.isIn && fact.setSyntax === setName) {
 			res = true; //Only return true if one of the facts is that element is a member of set
 		}
 	});
