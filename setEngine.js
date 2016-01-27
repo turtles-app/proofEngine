@@ -35,12 +35,6 @@ var setRoute = function (set) {
 	this.elementIndex 	= set.elements.length; //Index of particular element for which this eSet exists within set/eSet
 }
 
-// var cpShell = function (shell) {
-// 	this.equivalents = shell.equivalents;
-// 	this.eqActiveIndex = shell.eqActiveIndex;
-// 	this.elementIndex = shell.elementIndex;
-// };
-
 
 
 //  Element objects are placed in the elements (array) attribute
@@ -63,6 +57,7 @@ var Element = function (name, set) {
 //		"x is NOT contained in A, because [fact1, fact2, ...fact_n]"
 var Fact = function (elementName, isIn, setSyntax) {
 	this.subject = "containment"; //These objects are facts about containment, not inclusion, or equality
+	this.simple = typeof(setSyntax) === 'string'; //boolean -- true if setSyntax is a string, false if it's a syntax
 	this.elementName = elementName;
 	this.isIn = isIn; //true if x is in A, false if x is NOT in A
 	this.setSyntax = setSyntax; //Syntax of the referenced set

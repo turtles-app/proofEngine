@@ -1,3 +1,6 @@
+var _ = require("lodash");
+
+
 //Function that verifies if an element is in a given atmoic set (A set represented by its own name, not the result of an operation of other sets), 
 //based on an array of facts, each of which is a 3 fact object as defined in setEngine.js
 //Returns true if element is verifiably in the set, and false otherwise
@@ -11,7 +14,7 @@ var inAtomic = function(eName, setName, facts) {
 	return res;
 };
 
-notInAtomic = function(eName, setName, facts) {
+var notInAtomic = function(eName, setName, facts) {
 	var res = false;
 	facts.forEach(function(fact, index, list) {
 		if (fact.elementName === eName && !fact.isIn && fact.setSyntax ===setName) {
@@ -21,7 +24,11 @@ notInAtomic = function(eName, setName, facts) {
 	return res;
 };
 
-
+//Function checks if an element can be concluded to be in a composite set (resulting from operation between two other sets)
+// based on a single fact object
+var inSyntax = function(eName, syntax, fact) {
+	//Check if first set in syntax matches the fact syntax
+};
 
 //Function that verifies if an element is in any set based on
 //an array of facts. Element obj's are defined above, and facts are explained in the above comment.
@@ -39,7 +46,20 @@ var contains = function(eName, syntax, facts) {
 			inFirst = inAtomic(eName, syntax[0], facts);
 			break;
 		case 'object':
-			inFirst = contains(eName, syntax[0], facts);
+			var recurse = true;
+			facts.forEach(function(fact, index, list) {
+				//If the fact asserts that eName is in a composite set
+				if (fact.elementName === eName && !fact.simple) { //Then check if fact asserts eName is in first set of syntax
+					recurse = _.isEqual(fact.setSyntax, syntax[0]);
+					if (recurse) {
+						recurse = false;
+						inFirst = true;
+					}
+				}
+			});
+			if (recurse) {
+				inFirst = contains(eName, syntax[0], facts);
+			}
 			break;
 	}
 
@@ -49,7 +69,20 @@ var contains = function(eName, syntax, facts) {
 			inSecond = inAtomic(eName, syntax[2], facts);
 			break;
 		case 'object':
-			inSecond = contains(eName, syntax[2], facts);
+			var recurse = true;
+			facts.forEach(function(fact, index, list) {
+				//If the fact asserts that eName is in a composite set
+				if (fact.elementName === eName && !fact.simple) { //Then check if fact asserts eName is in first set of syntax
+					recurse = _.isEqual(fact.setSyntax, syntax[2]);
+					if (recurse) {
+						recurse = false;
+						inFirst = true;
+					}
+				}
+			});		
+			if (recurse) {
+				inSecond = contains(eName, syntax[2], facts);
+			}
 			break;
 	}
 

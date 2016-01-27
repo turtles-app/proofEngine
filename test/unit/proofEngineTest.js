@@ -6,7 +6,9 @@ var val;
 
 var fact1 =  new setEngine.Fact('x', true, 'A'), fact2 = new setEngine.Fact('x', true, 'B'), fact3 = new setEngine.Fact('x', false, 'C'), 
 fact4 = new setEngine.Fact("x", false, "A"), fact5 = new setEngine.Fact("x", true, "C"), fact6 = new setEngine.Fact('x', true, 'D'),
-fact7 = new setEngine.Fact("x", true, [["B", "n", "C"], "n", "D"]);
+fact7 = new setEngine.Fact("x", true, [["B", "n", "C"], "n", "D"]),
+fact8 = new setEngine.Fact("y", true, [["B", "n", "C"], "n", "D"]),
+fact9 = new setEngine.Fact("x", true, ["B", "n", "C"]);
 
 //	fact1 represents "x is in A"
 // 	fact2 represents "x is in B"
@@ -15,6 +17,8 @@ fact7 = new setEngine.Fact("x", true, [["B", "n", "C"], "n", "D"]);
 //	fact5 represents "x is in C"
 //	fact6 represents "x is in D"
 //	fact7 represents "x is in (B n C) n D"
+// 	fact8 represents "y is in (B n C) n D"
+//	fact9 represents "x is in B n C"
 describe('inAtomic() Function verifies atomic assertions (e.g. x is in A)', function() {
 	describe('valid arguments', function() {
 		it('1 salient fact', function() {
@@ -115,24 +119,53 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 			it("because x is in B & x is in C, & x is in D justifies 'x is in A U [(B n C) n D]'", function() {
 				val = app.contains('x', ['A', 'U', [['B', 'n', 'C'], 'n', 'D']], 
 					[
-					//three facts
-					fact2, //x is in B
-					fact5, //x is in C
-					fact6  //x is in D
+						//three facts
+						fact2, //x is in B
+						fact5, //x is in C
+						fact6  //x is in D
 					]);
 				val.should.equal(true);
 			});
 
-			////////////////////////////////////////
-			// Case without sufficient structure: //
-			////////////////////////////////////////
 			it("because x is in [B n C] n D justifies 'x is in A U [(B n C) n D]'", function(){
 				val = app.contains('x', ['A', 'U', [['B', 'n', 'C'], 'n', 'D']],
 					[
-					fact7 //x is in (B n C) n D
+						fact7 //x is in (B n C) n D
 					]);
 				val.should.equal(true);
 			});
+
+			it("because x is in D and x is in [B n C] n D justifies 'x is in A U [(B n C) n D]", function(){
+				val = app.contains('x', ['A', 'U', [['B', 'n', 'C'], 'n', 'D']],
+					[
+						fact7, //x is in (B n C) n D
+						fact6 //x is in D
+					]);
+				val.should.equal(true);
+			});
+
+			///////////////////
+			//Currently Fails//
+			it("because x is in (B n C) and x is in D justifies 'x is in A U [(B n C) n D]'", function(){
+				val = app.contains('x', ['A', 'U', [['B', 'n', 'C'], 'n', 'D']],
+					[
+						fact9, //x is in B n C
+						fact6  //x is in D
+					]);
+				val.should.equal(true);
+			});
+		});
+
+		describe("Invalid arguments:", function(){
+			it("because y is in [B n C] n D does not justify 'x is in A U [(B n C) n D]'", function(){
+				val = app.contains("x", ['A', 'U', [['B', 'n', 'C'], 'n', 'D']],
+					[
+						fact8 //y is in (B n C) n D --> wrong element name in fact
+					]);
+				val.should.equal(false);
+			});
+
+
 		});
 	});
 

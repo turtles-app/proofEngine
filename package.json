@@ -1,0 +1,27 @@
+{
+  "name": "proofEngine",
+  "version": "0.0.0",
+  "description": "Logic Engine for verifying set theory proofs",
+  "main": "proofEngine.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "chai": "^3.4.1",
+    "lodash": "^4.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turtles-app/proofEngine"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/turtles-app/proofEngine/issues"
+  },
+  "homepage": "https://github.com/turtles-app/proofEngine"
+}
