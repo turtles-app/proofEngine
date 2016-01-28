@@ -8,7 +8,13 @@ var fact1 =  new setEngine.Fact('x', true, 'A'), fact2 = new setEngine.Fact('x',
 fact4 = new setEngine.Fact("x", false, "A"), fact5 = new setEngine.Fact("x", true, "C"), fact6 = new setEngine.Fact('x', true, 'D'),
 fact7 = new setEngine.Fact("x", true, [["B", "n", "C"], "n", "D"]),
 fact8 = new setEngine.Fact("y", true, [["B", "n", "C"], "n", "D"]),
-fact9 = new setEngine.Fact("x", true, ["B", "n", "C"]);
+fact9 = new setEngine.Fact("x", true, ["B", "n", "C"]),
+factA = new setEngine.Fact("x", true, ["A", "U", ["B", "n", "C"]]);
+factB = new setEngine.Fact("x", false, ["B", "n", "C"]),
+factC = new setEngine.Fact("x", true, ["A", "n", "B"]),
+factD = new setEngine.Fact("x", true, ["A", "/", "B"]),
+factE = new setEngine.Fact("x", true, ["A", "U", "B"]),
+factF = new setEngine.Fact("x", false, ["A", "U", "B"]);
 
 //	fact1 represents "x is in A"
 // 	fact2 represents "x is in B"
@@ -19,6 +25,12 @@ fact9 = new setEngine.Fact("x", true, ["B", "n", "C"]);
 //	fact7 represents "x is in (B n C) n D"
 // 	fact8 represents "y is in (B n C) n D"
 //	fact9 represents "x is in B n C"
+//	factA represents "x is in A U (B n C)"
+//	factB represents "x is not in B n C"
+//	factC represents "x is in A n B"
+//	factD represents "x is in A / B"
+//	factE represents "x is in A U B"
+//	factF represents "x is not in A U B"
 describe('inAtomic() Function verifies atomic assertions (e.g. x is in A)', function() {
 	describe('valid arguments', function() {
 		it('1 salient fact', function() {
@@ -28,6 +40,34 @@ describe('inAtomic() Function verifies atomic assertions (e.g. x is in A)', func
 
 		it('1 sailent, 2 irrelevant facts', function() {
 			val = app.inAtomic('x', 'A', [fact1, fact2, fact3]);
+			val.should.equal(true);
+		});
+
+		describe("Simple facts can be concluded from complex ones", function() {
+			describe("Parsing Intersection facts:", function(){
+				it("because x is in A n B justifies 'x is in A'", function() {
+					val = app.inAtomic("x", "A", [factC]);
+					val.should.equal(true);
+				});
+				it("because x is in A n B justifies 'x is in B'", function(){
+					val = app.inAtomic("x", "B", [factC]); 
+					val.should.equal(true);
+				});
+			});
+
+			describe("Parsing Set Difference facts:", function(){
+				it("because x is in A/B justifies 'x is in A'", function(){
+					val = app.inAtomic("x", "A", [factD]);
+					val.should.equal(true);
+				});
+			});
+
+			describe("Parsing Union facts:", function(){
+				it("because x is in (A U [B n C]) AND x is not in (B n C) justifies 'x is in A'", function() {
+					val = app.inAtomic('x', 'A', [factB, factA]);
+					val.should.equal(true);
+				});
+			});
 		});
 	});
 
@@ -40,6 +80,32 @@ describe('inAtomic() Function verifies atomic assertions (e.g. x is in A)', func
 		it('1 irrelevant fact: element in wrong set', function() {
 			val = app.inAtomic('x', 'A', [fact2]);
 			val.should.equal(false);
+		});
+		describe("Invalid Set Difference: ", function(){
+			it("because x is in A/B does not justify 'x is in B'", function(){
+				val = app.inAtomic("x", "B", [factD]);
+				val.should.equal(false);
+			});
+		});
+		describe("Invalid Intersection:", function(){
+			it("because x is in A n B does not justify 'x is in C'", function(){
+				val = app.inAtomic("x", "C", [factC]);
+				val.should.equal(false);
+			});
+		});
+		describe("Invalid Union:", function(){
+			it("because x is in A U B AND x is in A does not justify 'x is in B'", function(){
+				val = app.inAtomic("x", "B", [fact1, factE]); 
+				val.should.equal(false);
+			});
+			it("because x is in A U B AND x is in B does not justify 'x is in A'", function(){
+				val = app.inAtomic("x", "A", [fact2, factE]);
+				val.should.equal(false);
+			});
+			it("because x is not in A U B and x is in B does not justify 'x is in A'", function(){
+				val = app.inAtomic("x", "A", [fact2, factF]);
+				val.should.equal(false);
+			});
 		});
 	});
 });
@@ -106,7 +172,7 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 		});
 	});
 
-	describe("\nClaim that x is in A U [(B n C) n D]", function() {
+	describe("\n    Claim that x is in A U [(B n C) n D]", function() {
 		describe("Valid arguments:", function(){
 			it("because x is in A justifies 'x is in A U [(B n C) n D]'", function() {
 				val = app.contains('x', ['A', 'U', [['B', 'n', 'C'], 'n', 'D']],

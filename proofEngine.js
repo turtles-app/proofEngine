@@ -6,10 +6,38 @@ var _ = require("lodash");
 //Returns true if element is verifiably in the set, and false otherwise
 var inAtomic = function(eName, setName, facts) {
 	var res = false;
-	facts.forEach(function(fact, index, list) {
-		if (fact.elementName === eName && fact.isIn && fact.setSyntax === setName) {
-			res = true; //Only return true if one of the facts is that element is a member of set
-		}
+	facts.forEach(function(fact, index, sameFacts) {
+		if (fact.elementName === eName){
+			if(fact.isIn && fact.setSyntax === setName) {
+				res = true; //Only return true if one of the facts is that element is a member of set
+			} else if (!fact.simple) {
+				switch(fact.setSyntax[1]) {
+					case '/':
+						if (fact.setSyntax[0] === setName) {
+							res = true;
+						}
+						break;
+					case 'n':
+						if (fact.setSyntax[0] === setName || fact.setSyntax[2] === setName) {
+							res = true;
+						}
+						break;
+					case 'U':
+						sameFacts.forEach(function(f, i) {
+							if (fact.setSyntax[0] === setName) {
+								if (!f.isIn && _.isEqual(f.setSyntax, fact.setSyntax[2]) ) {
+									res = true;
+								}
+							} else if (fact.setSyntax[2] === setName) {
+								if (!f.isIn && _.isEqual(f.setSyntax, fact.setSyntax[2]) ) {
+									res = true;
+								}
+							}
+						});
+						break;
+				}
+			}
+		} 
 	});
 	return res;
 };
