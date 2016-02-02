@@ -143,6 +143,14 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 					]); 
 				val.should.equal(true);			
 			});
+
+			it("because x is in B n C justifies 'x is in A U (B n C)", function(){
+				val = app.contains('x', ['A', 'U', ['B', 'n', 'C']], 
+					[
+						fact9 // because x is in B n C
+					]);
+				val.should.equal(true);
+			});
 		});
 
 		describe('invalid arguments', function(){

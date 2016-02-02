@@ -82,7 +82,7 @@ var contains = function(eName, syntax, facts) {
 					if (syntaxMatch) {
 						recurse = false;
 						inFirst = true;
-					}
+					} 
 				}
 			});
 			if (recurse) {
