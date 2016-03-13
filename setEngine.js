@@ -8,6 +8,7 @@ var Set = function (groupName, name, firstEquivalence) {
 	//List of syntax (array) representations of the set
 	this.equivalents = [name]; 
 	this.elements = [];
+	this.knownElements = [];
 	
 	// If the set is the product of an operation between other sets
 	if (firstEquivalence) {
@@ -15,10 +16,13 @@ var Set = function (groupName, name, firstEquivalence) {
 		this.equivalents.push(firstEquivalence);
 	}
 	this.eqActiveIndex = 0;
-
+	this.isSet = true;
 
 };
 
+		//////////////////////
+		// Methods for Sets //
+		//////////////////////
 
 //Puts an element in a Set's elements attribute
 Set.prototype.putIn = function(element) {
@@ -26,6 +30,56 @@ Set.prototype.putIn = function(element) {
 	this.elements.push(element);
 }
 
+//Assign all elements known to be in the set from a given list of facts
+Set.prototype.setKnownElements = function(facts) {
+	var that = this;
+	var known = []; //temp list of known elements
+	this.elements.forEach(function(element) {
+		var elIsKnown = false;
+		facts.forEach(function(fact) {
+			if (fact.elementName === element.name){
+				that.equivalents.forEach(function(eq) {
+					if (fact.isIn && _.isEqual(eq, fact.setSyntax)) elIsKnown = true;
+				});
+			}
+		});
+		if (elIsKnown) known.push(element);
+	});
+	this.knownElements = known;
+	console.log(this.knownElements);
+}
+
+//	Function that returns stringified syntax
+var stringifySyntax = function (syntax) {
+	switch (typeof(syntax)) {
+		case 'string':
+			return syntax;
+			break;
+		case 'object':
+			var res = "";
+			switch(typeof(syntax[0])) {
+				case "string":
+					res = res + syntax[0] + " ";
+					break;
+				case "object":
+					var first = stringifySyntax(syntax[0]);
+					res = "(" + res + first + ") ";
+					break;
+			}
+			res = res + syntax[1];
+			switch(typeof(syntax[2])) {
+				case "string":
+					res = res + " " + syntax[2];
+					break;
+				case "object":
+					var second = stringifySyntax(syntax[2]);
+					res = res + " (" + second + ")";
+					break;
+			}
+			break;
+	}
+	return(res);
+};
 
 //  Abstract class that relates an element to a set
 //  that contains it
@@ -45,10 +99,13 @@ var setRoute = function (set) {
 //	in which the Element resides.
 var Element = function (name, set) {
 	this.name = name;
+	this.groupIndex;
 	var firstRoute = new setRoute(set);
 	this.routes = [];
 	this.routes.push(firstRoute);
 	set.elements.push(this);
+
+	this.isSet=false;
 }
 
 
@@ -63,11 +120,16 @@ var Fact = function (elementName, isIn, setSyntax) {
 	this.setSyntax = setSyntax; //Syntax of the referenced set
 	this.justifications = []; //array of facts submited by user to justify this fact
 	this.usedJustifications = []; //subset of justifications actually necessary for justification
+	var tmpStr = ' is in ';
+	if (!isIn) tmpStr = ' is not in ';
+	this.str = elementName + tmpStr + setSyntax.toString();
+	this.groupIndex;
 };
 
 module.exports = {
 	Set: 	  Set,
 	Element:  Element,
 	setRoute: setRoute,
-	Fact: Fact
+	Fact: Fact,
+	stringifySyntax: stringifySyntax
 };
