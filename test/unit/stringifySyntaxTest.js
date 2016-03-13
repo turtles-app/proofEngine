@@ -3,6 +3,11 @@ var should = require('chai').should();
 var setEngine = require("../../setEngine.js");
 
 describe("stringifySyntax() Test", function() {
+	it("'A' returns 'A'", function(){
+		var str = setEngine.stringifySyntax("A");
+		str.should.equal("A");
+	});
+
 	it("['B', 'n', 'C'] returns 'B n C'", function(){
 		var str = setEngine.stringifySyntax(["B", "n", "C"]);
 		str.should.equal("B n C");

@@ -7,6 +7,7 @@ var Set = function (groupName, name, firstEquivalence) {
 
 	//List of syntax (array) representations of the set
 	this.equivalents = [name]; 
+	this.strEquivalents = [stringifySyntax(name)];
 	this.elements = [];
 	this.knownElements = [];
 	
