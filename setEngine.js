@@ -123,7 +123,7 @@ var Fact = function (elementName, isIn, setSyntax) {
 	this.usedJustifications = []; //subset of justifications actually necessary for justification
 	var tmpStr = ' is in ';
 	if (!isIn) tmpStr = ' is not in ';
-	this.str = elementName + tmpStr + setSyntax.toString();
+	this.str = elementName + tmpStr + stringifySyntax(setSyntax);
 	this.groupIndex;
 };
 
