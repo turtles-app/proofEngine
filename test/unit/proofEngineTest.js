@@ -243,4 +243,28 @@ describe('contained() Function verifies composite assertions (e.g. x is in (A n 
 		});
 	});
 
+	describe("Claim x is in (B n C) n A", function (){
+		describe("Valid arguments: ", function(){
+			it("because x is in (B n C)  and x is in A justifies 'x is in (B n C) n A", function() {
+				val = app.contains("x", [['B', 'n', 'C'], 'n', 'A'],
+					[
+						fact9,
+						fact1	
+					]);
+				val.should.equal(true);
+
+			});
+
+			it("because x is in A, B, and C justifies 'x is in (B n C) n A", function() {
+				val = app.contains("x", [['B', 'n', 'C'], 'n', 'A'], 
+					[
+						fact1,
+						fact2,
+						fact5
+
+					]);
+				val.should.equal(true);
+			});
+		});
+	});
 });
